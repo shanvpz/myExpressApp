@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({extended: true}))
   MongoClient.connect(MongoUrl, (err, database) => {
     if (err) return console.log(err)
     db = database.db('dev01-db01')
-    app.listen(3000, () => {
+    app.listen(8080, () => {
       console.log('listening on 3000 in db')
       // db.collection('quotes').find().toArray(function(err, results) {
       //   console.log(results)
