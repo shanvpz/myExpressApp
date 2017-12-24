@@ -1,46 +1,53 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+// const express = require('express');
+const bodyParser= require('body-parser')
+const MongoClient = require('mongodb').MongoClient
+const MongoUrl='mongodb://dev01admin:dev01admin@ds131237.mlab.com:31237/dev01-db01'
+const app = express()
+app.set('view engine', 'ejs')
+var db
+app.use(bodyParser.urlencoded({extended: true}))
+// app.listen(3000, function() {
+//     console.log('listening on 3000')
+//   })
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+  // app.get('/',function(request,response){
+  //   response.send('Hello nodejs')
 
-var app = express();
+  // })
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+  // app.get('/',(req,res)=>{
+  //   res.sendFile(__dirname+'/index.html')
+    
+  // })
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+  // app.post('/quotes',(req,res)=>{
+  //   console.log(req.body)
+    
+  // })
+  MongoClient.connect(MongoUrl, (err, database) => {
+    if (err) return console.log(err)
+    db = database.db('dev01-db01')
+    app.listen(8080, () => {
+      console.log('listening on 3000 in db')
+      // db.collection('quotes').find().toArray(function(err, results) {
+      //   console.log(results)
+        // send HTML file populated with quotes here
+      //})
+    })
+  })
 
-app.use('/', index);
-app.use('/users', users);
+  app.post('/quotes', (req, res) => {
+    db.collection('quotes').save(req.body, (err, result) => {
+      if (err) return console.log(err)
+  
+      console.log('saved to database')
+      res.redirect('/')
+    })
+  })
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
+  app.get('/',(req,res)=>{
+    db.collection('quotes').find().toArray(function(err,results){
+      if(err) return console.log(err)
+      res.render('index.ejs',{quotes:results})
+    })
+  })
