@@ -6,6 +6,7 @@ const app = express()
 app.set('view engine', 'ejs')
 var db
 app.use(bodyParser.urlencoded({extended: true}))
+
 // app.listen(3000, function() {
 //     console.log('listening on 3000')
 //   })
@@ -48,6 +49,6 @@ app.use(bodyParser.urlencoded({extended: true}))
   app.get('/',(req,res)=>{
     db.collection('quotes').find().toArray(function(err,results){
       if(err) return console.log(err)
-      res.render('index.ejs',{quotes:results})
+      res.render('index.ejs',{quotes:results,title:'Home'})
     })
   })
