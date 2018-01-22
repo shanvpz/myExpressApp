@@ -18,12 +18,12 @@ app.use(bodyParser.urlencoded({extended: true}))
 
   // app.get('/',(req,res)=>{
   //   res.sendFile(__dirname+'/index.html')
-    
+
   // })
 
   // app.post('/quotes',(req,res)=>{
   //   console.log(req.body)
-    
+
   // })
   MongoClient.connect(MongoUrl, (err, database) => {
     if (err) return console.log(err)
@@ -40,15 +40,23 @@ app.use(bodyParser.urlencoded({extended: true}))
   app.post('/quotes', (req, res) => {
     db.collection('quotes').save(req.body, (err, result) => {
       if (err) return console.log(err)
-  
+
       console.log('saved to database')
       res.redirect('/')
     })
   })
 
   app.get('/',(req,res)=>{
+    // db.collection('quotes').find().toArray(function(err,results){
+    //   if(err) return console.log(err)
+      res.render('index.ejs',{title:'Happy Bday Kp!'})
+    // })
+  })
+
+
+  app.get('/tibo',(req,res)=>{
     db.collection('quotes').find().toArray(function(err,results){
       if(err) return console.log(err)
-      res.render('index.ejs',{quotes:results,title:'Home'})
+      res.render('thisisit.ejs',{quotes:results,title:'Home'})
     })
   })
